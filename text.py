@@ -28,7 +28,7 @@ def explain_definition(definition):
 
 @app.route("/")
 def index():
-    return render_template("../templates/index.html")
+    return render_template("../index.html")
 
 @app.route("/explain", methods=["POST"])
 def explain():
