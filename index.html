@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Explaino Chatbot</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f0f4f8;
+    margin: 0; padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #333;
+  }
+
+  h1 {
+    color: #0052cc;
+    margin-bottom: 0.2rem;
+  }
+
+  p.description {
+    color: #666;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+  }
+
+  input[type="text"] {
+    width: 300px;
+    padding: 0.6rem 1rem;
+    font-size: 1.1rem;
+    border: 2px solid #0052cc;
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.3s ease;
+  }
+  input[type="text"]:focus {
+    border-color: #003d99;
+  }
+
+  button {
+    margin-left: 0.5rem;
+    padding: 0.6rem 1.5rem;
+    font-size: 1.1rem;
+    color: white;
+    background-color: #0052cc;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  button:hover {
+    background-color: #003d99;
+  }
+
+  #output {
+    margin-top: 2rem;
+    width: 90%;
+    max-width: 700px;
+    background: white;
+    box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+  }
+
+  #output h3 {
+    margin-top: 0;
+    color: #004080;
+  }
+
+  #output p {
+    font-size: 1.1rem;
+    line-height: 1.5;
+  }
+
+  .error {
+    color: #cc0000;
+    font-weight: bold;
+  }
+
+  @media (max-width: 400px) {
+    input[type="text"] {
+      width: 90%;
+    }
+    button {
+      width: 90%;
+      margin: 1rem 0 0 0;
+    }
+  }
+</style>
+</head>
+<body>
+  <h1>Explaino Chatbot</h1>
+  <p class="description">Enter a word to get its meaning and a simple explanation...</p>
+  <div>
+    <input type="text" id="wordInput" placeholder="Enter a word" />
+    <button onclick="getExplanation()">Explain</button>
+  </div>
+  <div id="output"></div>
+
+<script>
+async function getExplanation() {
+  const word = document.getElementById('wordInput').value.trim();
+  const output = document.getElementById('output');
+  output.innerHTML = 'Loading...';
+
+  if (!word) {
+    output.innerHTML = '<p class="error">Please enter a word.</p>';
+    return;
+  }
+
+  try {
+    const response = await fetch('/explain', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({word})
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      output.innerHTML = `<p class="error">${error.error}</p>`;
+      return;
+    }
+
+    const data = await response.json();
+    output.innerHTML = `
+      <h3>Word: ${data.word}</h3>
+      <p><strong>Definition:</strong> ${data.definition}</p>
+      <p><strong>Explanation:</strong> ${data.explanation}</p>
+    `;
+  } catch (e) {
+    output.innerHTML = '<p class="error">Error connecting to server.</p>';
+  }
+}
+</script>
+</body>
+</html>
