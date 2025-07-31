@@ -2,8 +2,6 @@ from flask import Flask, render_template, request, jsonify
 from nltk.corpus import wordnet
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 import nltk
-
-# Download WordNet data if needed
 nltk.download('wordnet')
 nltk.download('omw-1.4')
 
